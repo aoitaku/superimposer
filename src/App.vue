@@ -1,26 +1,14 @@
-<template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <div>
-      <p>
-        If Element is successfully added to this project, you'll see an
-        <code v-text="'<el-button>'"></code>
-        below
-      </p>
-      <el-button>el-button</el-button>
-    </div>
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+<template lang="pug">
+#app
+  a(:href="url", target="_blank") {{ url }}
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
 
-export default {
-  name: 'app',
-  components: {
-    HelloWorld
-  }
+@Component
+export default class App extends Vue {
+  public url = 'http://localhost:3000/'
 }
 </script>
 

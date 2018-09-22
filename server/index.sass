@@ -1,0 +1,78 @@
+html, body
+  margin: 0
+
+#app
+  width: 640px
+  margin: auto
+  display: flex
+  justify-content: center
+  align-items: center
+  flex-direction: column
+
+.mic-container
+  margin: 20px 0
+  position: relative
+  #mic
+    position: relative
+    height: 200px
+    width: 200px
+    border-radius: 50%
+    border: 0px
+    font-size: 64px
+    &:focus
+      outline: 0px
+    &.on
+      color: #cccccc
+      background-color: transparent
+    &.off
+      color: #ffffff
+      background-color: #cccccc
+  #volume-indicator
+    width: 180px
+    height: 180px
+    border: 10px solid #cccccc
+    border-radius: 50%
+    position: absolute
+
+.preview-container
+  width: 100%
+  height: 200px
+  padding: 20px
+  border: 1px solid #cccccc
+  border-radius: 8px
+  display: flex
+  justify-content: center
+  align-items: center
+  #preview
+    &.in-progress
+      color: #0000ff
+
+@font-face
+  font-family: 'icomoon'
+  src: url('../fonts/icomoon.woff') format('woff')
+  font-weight: normal
+  font-style: normal
+
+#mic
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important
+  speak: none
+  font-style: normal
+  font-weight: normal
+  font-variant: normal
+  text-transform: none
+  line-height: 1
+
+  /* Enable Ligatures ================ */
+  letter-spacing: 0
+  -webkit-font-feature-settings: "liga"
+  -moz-font-feature-settings: "liga=1"
+  -moz-font-feature-settings: "liga"
+  -ms-font-feature-settings: "liga" 1
+  font-feature-settings: "liga"
+  -webkit-font-variant-ligatures: discretionary-ligatures
+  font-variant-ligatures: discretionary-ligatures
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale

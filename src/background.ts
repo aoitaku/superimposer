@@ -1,30 +1,63 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, shell } from 'electron'
 import * as path from 'path'
 import { format as formatUrl } from 'url'
 import {
   createProtocol,
-  installVueDevtools
+  installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib'
+import express from 'express'
+import expressWs from 'express-ws'
+import fs from 'fs'
+declare var __static: string
 const isDevelopment = process.env.NODE_ENV !== 'production'
 if (isDevelopment) {
   // Don't load any native (external) modules until the following line is run:
+  // tslint:disable-next-line:no-var-requires
   require('module').globalPaths.push(process.env.NODE_MODULES_PATH)
 }
+let logPath: Nullable<string> = null
+if (isDevelopment) {
+  logPath = path.join(__dirname, '../recognition/result.txt')
+} else {
+  logPath = path.join(app.getPath('userData'), 'result.txt')
+}
+
+const { app: server } = expressWs(express())
+server.use(express.static(path.join(__static, 'server/')))
+
+server.ws('/', (ws) => {
+  ws.on('message', (msg) => {
+    if (logPath) {
+      fs.writeFile(logPath, msg, 'utf8', (err: NodeJS.ErrnoException) => {
+        if (err) {
+          // tslint:disable-next-line:no-console
+          return console.error(err)
+        }
+      })
+    }
+  })
+})
+server.listen(3000)
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
-let mainWindow: any
+type Nullable<T> = T | null
+let mainWindow: Nullable<BrowserWindow>
 
 // Standard scheme must be registered before the app is ready
 protocol.registerStandardSchemes(['app'], { secure: true })
 function createMainWindow () {
-  const window = new BrowserWindow()
+  const window = new BrowserWindow({
+    webPreferences: {
+      devTools: false,
+    },
+  })
 
   if (isDevelopment) {
     // Load the url of the dev server if in development mode
     window.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string)
-    if (!process.env.IS_TEST) window.webContents.openDevTools()
+    if (!process.env.IS_TEST) { window.webContents.openDevTools() }
   } else {
     createProtocol('app')
     //   Load the index.html when not in development
@@ -32,8 +65,8 @@ function createMainWindow () {
       formatUrl({
         pathname: path.join(__dirname, 'index.html'),
         protocol: 'file',
-        slashes: true
-      })
+        slashes: true,
+      }),
     )
   }
 
@@ -46,6 +79,11 @@ function createMainWindow () {
     setImmediate(() => {
       window.focus()
     })
+  })
+
+  window.webContents.on('new-window', (event, url) => {
+    event.preventDefault()
+    shell.openExternal(url)
   })
 
   return window
