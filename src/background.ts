@@ -18,11 +18,13 @@ if (isDevelopment) {
   require('module').globalPaths.push(process.env.NODE_MODULES_PATH)
 }
 let logPath: Nullable<string> = null
-if (isDevelopment) {
-  logPath = path.join(__dirname, '../recognition/result.txt')
-} else {
-  logPath = path.join(app.getPath('userData'), 'result.txt')
+
+const logDirectory = path.join(app.getPath('home'), 'Documents/superimposer')
+
+if (!fs.existsSync(logDirectory)) {
+  fs.mkdirSync(logDirectory)
 }
+logPath = path.join(logDirectory, 'result.txt')
 
 const { app: server } = expressWs(express())
 server.use(express.static(path.join(__static, 'server/')))
